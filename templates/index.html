@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Draw and Save</title>
+</head>
+<body>
+    <h1>Draw an Object</h1>
+    <canvas id="drawingCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas><br>
+    <label for="category">Category:</label>
+    <input type="text" id="category" name="category"><br><br>
+    <button onclick="saveDrawing()">Save Drawing</button>
+
+    <script>
+        let canvas = document.getElementById('drawingCanvas');
+        let context = canvas.getContext('2d');
+        let drawing = false;
+
+        canvas.addEventListener('mousedown', function() {
+            drawing = true;
+        });
+
+        canvas.addEventListener('mouseup', function() {
+            drawing = false;
+            context.beginPath();
+        });
+
+        canvas.addEventListener('mousemove', function(event) {
+            if (drawing) {
+                context.lineWidth = 2;
+                context.lineCap = 'round';
+                context.strokeStyle = 'black';
+
+                context.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+                context.stroke();
+                context.beginPath();
+                context.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+            }
+        });
+
+        function saveDrawing() {
+            let dataURL = canvas.toDataURL('image/png');
+            let category = document.getElementById('category').value;
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', '/save_drawing', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('image=' + encodeURIComponent(dataURL) + '&category=' + encodeURIComponent(category));
+            xhr.onload = function() {
+                if (xhr.status == 200) {
+                    alert('Drawing saved!');
+                }
+            };
+        }
+    </script>
+</body>
+</html>
