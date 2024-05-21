@@ -1,55 +1,115 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Draw and Save</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dibujar un Objeto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f2ff; /* Color de fondo claro */
+            text-align: center;
+            padding: 20px;
+        }
+        #container {
+            display: inline-block;
+            text-align: center;
+        }
+        #header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Alinea el logo a la izquierda y el título a la derecha */
+            margin-bottom: 20px;
+        }
+        #header img {
+            width: 150px;
+            margin-right: 20px;
+            align-self: flex-start; /* Alinea el logo a la parte superior izquierda */
+        }
+        #header h1 {
+            color: #000000; /* Color del texto en negro */
+            margin: 0 auto;
+        }
+        canvas {
+            border: 2px solid #000000; /* Color del borde en negro */
+            background-color: #ffffff;
+        }
+        button, input[type="submit"] {
+            background-color: #000000; /* Color de fondo del botón en negro */
+            color: #ffffff; /* Color del texto del botón */
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover, input[type="submit"]:hover {
+            background-color: #444444; /* Color de fondo del botón al pasar el cursor */
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
 </head>
 <body>
-    <h1>Draw an Object</h1>
-    <canvas id="drawingCanvas" width="400" height="400" style="border:1px solid #000000;"></canvas><br>
-    <label for="category">Category:</label>
-    <input type="text" id="category" name="category"><br><br>
-    <button onclick="saveDrawing()">Save Drawing</button>
+    <div id="header">
+        <img src="https://cayetano.edu.pe/wp-content/uploads/2024/01/logo-upch-ing-des.png" alt="UPCH Logo">
+    </div>
+    <div id="container">
+        <h1>Dibujar un Objeto</h1>
+        <canvas id="myCanvas" width="400" height="400"></canvas>
+        <br>
+        <input type="text" id="category" placeholder="Categoría">
+        <br>
+        <button onclick="clearCanvas()">Borrar</button>
+        <form method="post" action="upload" onsubmit="prepareImage();">
+            <input type="hidden" id="imageData" name="myImage">
+            <input type="submit" value="Guardar Dibujo">
+        </form>
+    </div>
 
     <script>
-        let canvas = document.getElementById('drawingCanvas');
-        let context = canvas.getContext('2d');
-        let drawing = false;
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
 
-        canvas.addEventListener('mousedown', function() {
-            drawing = true;
-        });
-
-        canvas.addEventListener('mouseup', function() {
-            drawing = false;
-            context.beginPath();
-        });
-
-        canvas.addEventListener('mousemove', function(event) {
-            if (drawing) {
-                context.lineWidth = 2;
-                context.lineCap = 'round';
-                context.strokeStyle = 'black';
-
-                context.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
-                context.stroke();
-                context.beginPath();
-                context.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
-            }
-        });
-
-        function saveDrawing() {
-            let dataURL = canvas.toDataURL('image/png');
-            let category = document.getElementById('category').value;
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '/save_drawing', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.send('image=' + encodeURIComponent(dataURL) + '&category=' + encodeURIComponent(category));
-            xhr.onload = function() {
-                if (xhr.status == 200) {
-                    alert('Drawing saved!');
-                }
-            };
+        function startPosition(e) {
+            painting = true;
+            draw(e);
         }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = 10;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = '#000000'; // Color del trazo en negro
+
+            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function prepareImage() {
+            const imageData = canvas.toDataURL('image/png');
+            document.getElementById('imageData').value = imageData;
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
     </script>
 </body>
 </html>
