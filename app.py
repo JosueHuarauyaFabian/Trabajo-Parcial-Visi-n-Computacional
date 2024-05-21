@@ -15,7 +15,6 @@ def main():
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
-        # check if the post request has the file part
         img_data = request.form.get('myImage').replace("data:image/png;base64,", "")
         category = request.form.get('category')
         print(category)
@@ -28,7 +27,6 @@ def upload():
     except Exception as err:
         print("Error occurred")
         print(err)
-
     return redirect("/", code=302)
 
 @app.route('/prepare', methods=['GET'])
