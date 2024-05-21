@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,22 +13,23 @@
         }
         #container {
             display: inline-block;
-            text-align: center;
+            text-align: center; /* Centrar el contenido del contenedor */
         }
         #header {
             display: flex;
             align-items: center;
-            justify-content: space-between; /* Alinea el logo a la izquierda y el título a la derecha */
+            justify-content: center; /* Centrar el logo y el título horizontalmente */
             margin-bottom: 20px;
         }
         #header img {
             width: 150px;
             margin-right: 20px;
-            align-self: flex-start; /* Alinea el logo a la parte superior izquierda */
         }
         #header h1 {
             color: #000000; /* Color del texto en negro */
-            margin: 0 auto;
+        }
+        #project-logo {
+            width: 100px; /* Tamaño del logo del proyecto */
         }
         canvas {
             border: 2px solid #000000; /* Color del borde en negro */
@@ -46,7 +47,7 @@
         button:hover, input[type="submit"]:hover {
             background-color: #444444; /* Color de fondo del botón al pasar el cursor */
         }
-        input[type="text"] {
+        input[type="text"], select {
             padding: 10px;
             font-size: 16px;
             margin-top: 10px;
@@ -57,16 +58,24 @@
 <body>
     <div id="header">
         <img src="https://cayetano.edu.pe/wp-content/uploads/2024/01/logo-upch-ing-des.png" alt="UPCH Logo">
+        <h1>Dibujar un Objeto</h1>
     </div>
     <div id="container">
-        <h1>Dibujar un Objeto</h1>
         <canvas id="myCanvas" width="400" height="400"></canvas>
         <br>
-        <input type="text" id="category" placeholder="Categoría">
+        <select id="category">
+            <option value="">Seleccione una categoría</option>
+            <option value="Animales">Animales</option>
+            <option value="Frutas">Frutas</option>
+            <option value="Vehiculos">Vehículos</option>
+            <option value="Formas Geometricas">Formas Geométricas</option>
+            <option value="Objetos de la Casa">Objetos de la Casa</option>
+        </select>
         <br>
         <button onclick="clearCanvas()">Borrar</button>
         <form method="post" action="upload" onsubmit="prepareImage();">
             <input type="hidden" id="imageData" name="myImage">
+            <input type="hidden" id="categoryInput" name="category">
             <input type="submit" value="Guardar Dibujo">
         </form>
     </div>
@@ -105,6 +114,7 @@
         function prepareImage() {
             const imageData = canvas.toDataURL('image/png');
             document.getElementById('imageData').value = imageData;
+            document.getElementById('categoryInput').value = document.getElementById('category').value;
         }
 
         canvas.addEventListener('mousedown', startPosition);
