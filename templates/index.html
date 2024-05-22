@@ -7,37 +7,36 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #e6f2ff; /* Color de fondo claro */
+            background-color: #e6f2ff;
             text-align: center;
             padding: 20px;
         }
         #container {
             display: inline-block;
-            text-align: center; /* Centrar el contenido del contenedor */
+            text-align: left;
         }
         #header {
             display: flex;
             align-items: center;
-            justify-content: center; /* Centrar el logo y el título horizontalmente */
             margin-bottom: 20px;
+            justify-content: space-between;
         }
         #header img {
             width: 150px;
             margin-right: 20px;
         }
         #header h1 {
-            color: #000000; /* Color del texto en negro */
-        }
-        #project-logo {
-            width: 100px; /* Tamaño del logo del proyecto */
+            color: #000000;
+            flex-grow: 1;
+            text-align: center;
         }
         canvas {
-            border: 2px solid #000000; /* Color del borde en negro */
+            border: 2px solid #000000;
             background-color: #ffffff;
         }
         button, input[type="submit"] {
-            background-color: #000000; /* Color de fondo del botón en negro */
-            color: #ffffff; /* Color del texto del botón */
+            background-color: #000000;
+            color: #ffffff;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -45,7 +44,7 @@
             margin-top: 10px;
         }
         button:hover, input[type="submit"]:hover {
-            background-color: #444444; /* Color de fondo del botón al pasar el cursor */
+            background-color: #444444;
         }
         input[type="text"], select {
             padding: 10px;
@@ -57,7 +56,7 @@
 </head>
 <body>
     <div id="header">
-        <img src="https://cayetano.edu.pe/wp-content/uploads/2024/01/logo-upch-ing-des.png" alt="UPCH Logo">
+        <img src="https://drive.google.com/uc?export=view&id=1Atya2rEiJzG_GC4Xt8TXCQ-ubmQRVsC7" alt="Logo del Proyecto">
         <h1>Dibujar un Objeto</h1>
     </div>
     <div id="container">
@@ -68,7 +67,7 @@
             <option value="Animales">Animales</option>
             <option value="Frutas">Frutas</option>
             <option value="Vehiculos">Vehículos</option>
-            <option value="Formas Geometricas">Formas Geométricas</option>
+            <option value="Formas Geométricas">Formas Geométricas</option>
             <option value="Objetos de la Casa">Objetos de la Casa</option>
         </select>
         <br>
@@ -99,7 +98,7 @@
             if (!painting) return;
             ctx.lineWidth = 10;
             ctx.lineCap = 'round';
-            ctx.strokeStyle = '#000000'; // Color del trazo en negro
+            ctx.strokeStyle = '#000000';
 
             ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
             ctx.stroke();
