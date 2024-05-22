@@ -52,6 +52,9 @@
             margin-top: 10px;
             border: 1px solid #ccc;
         }
+        .button-group {
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -77,6 +80,16 @@
             <input type="hidden" id="categoryInput" name="category">
             <input type="submit" value="Guardar Dibujo">
         </form>
+        <br>
+        <button onclick="window.location.href='/download_all'">Descargar Todas las Imágenes</button>
+    </div>
+    <div class="button-group">
+        <h2>Ver Imágenes por Categoría</h2>
+        <button onclick="window.location.href='/uploads/Animales'">Animales</button>
+        <button onclick="window.location.href='/uploads/Frutas'">Frutas</button>
+        <button onclick="window.location.href='/uploads/Vehiculos'">Vehículos</button>
+        <button onclick="window.location.href='/uploads/Formas Geométricas'">Formas Geométricas</button>
+        <button onclick="window.location.href='/uploads/Objetos de la Casa'">Objetos de la Casa</button>
     </div>
 
     <script>

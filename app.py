@@ -1,6 +1,7 @@
 import tempfile
 import os
-from flask import Flask, request, redirect, render_template, send_file
+import zipfile
+from flask import Flask, request, redirect, render_template, send_file, send_from_directory
 from skimage import io
 import base64
 import glob
@@ -15,7 +16,6 @@ def main():
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
-        # check if the post request has the file part
         img_data = request.form.get('myImage').replace("data:image/png;base64,", "")
         category = request.form.get('category')
         print(category)
@@ -30,6 +30,29 @@ def upload():
         print(err)
 
     return redirect("/", code=302)
+
+@app.route('/uploads/<category>', methods=['GET'])
+def list_files(category):
+    category_dir = os.path.join('static', 'uploads', category)
+    if not os.path.exists(category_dir):
+        return "Category not found", 404
+
+    files = os.listdir(category_dir)
+    return render_template('files_list.html', files=files, category=category)
+
+@app.route('/uploads/<category>/<filename>', methods=['GET'])
+def get_file(category, filename):
+    return send_from_directory(os.path.join('static', 'uploads', category), filename)
+
+@app.route('/download_all', methods=['GET'])
+def download_all():
+    zip_filename = "images.zip"
+    with zipfile.ZipFile(zip_filename, 'w') as zipf:
+        for root, dirs, files in os.walk('static/uploads'):
+            for file in files:
+                zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), 'static/uploads'))
+    
+    return send_file(zip_filename, as_attachment=True)
 
 @app.route('/prepare', methods=['GET'])
 def prepare_dataset():

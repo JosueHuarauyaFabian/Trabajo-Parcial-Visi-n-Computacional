@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archivos en {{ category }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f2ff;
+            text-align: center;
+            padding: 20px;
+        }
+        #header {
+            margin-bottom: 20px;
+        }
+        #header img {
+            width: 150px;
+            height: auto;
+            margin-right: 20px;
+        }
+        #header h1 {
+            color: #000000;
+        }
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .image-container img {
+            margin: 10px;
+            border: 2px solid #000000;
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <img src="https://www.cugh.org/wp-content/uploads/sites/95/2020/07/Cayetano.Heredia.Logo_.300.png" alt="Logo del Proyecto">
+        <h1>Archivos en la categoría {{ category }}</h1>
+    </div>
+    <div class="image-container">
+        {% for file in files %}
+        <div>
+            <a href="{{ url_for('get_file', category=category, filename=file) }}">
+                <img src="{{ url_for('get_file', category=category, filename=file) }}" alt="{{ file }}">
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <br>
+    <a href="/">Volver</a>
+</body>
+</html>
