@@ -43,8 +43,8 @@
     <div class="image-container">
         {% for file in files %}
         <div>
-            <a href="{{ url_for('get_file', category=category, filename=file) }}">
-                <img src="{{ url_for('get_file', category=category, filename=file) }}" alt="{{ file }}">
+            <a href="{{ url_for('get_file', category=category, file_id=file['id']) }}">
+                <img src="{{ url_for('get_file', category=category, file_id=file['id']) }}" alt="{{ file['name'] }}">
             </a>
         </div>
         {% endfor %}

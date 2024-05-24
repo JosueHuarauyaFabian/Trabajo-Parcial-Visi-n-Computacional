@@ -1,13 +1,32 @@
 import tempfile
 import os
 import zipfile
-from flask import Flask, request, redirect, render_template, send_file, send_from_directory
+from flask import Flask, request, redirect, render_template, send_file
 from skimage import io
 import base64
 import glob
 import numpy as np
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
 
 app = Flask(__name__)
+
+SCOPES = ['https://www.googleapis.com/auth/drive.file']
+SERVICE_ACCOUNT_FILE = 'credentials.json'
+
+credentials = service_account.Credentials.from_service_account_file(
+    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+service = build('drive', 'v3', credentials=credentials)
+
+# IDs de las carpetas en Google Drive
+DRIVE_FOLDER_IDS = {
+    "Animales": "1LxicGpnR4mwnvb6dDYLqKvFic3ZBCfGg",
+    "Frutas": "1yt7IDii7CGhMEBWmZvUnWp0cG2omBAVQ",
+    "Vehículos": "1L-SKX7ccMZqFXFFVQxjuYEZ7iZB0m22l",
+    "Formas Geométricas": "1KnbPkxwrSl06X9zBsZcmXcUA46Z-wSW2",
+    "Objetos de la Casa": "1qHefVFZ5sm0Vgr7VkUnndW1S1SshaF0W"
+}
 
 @app.route("/")
 def main():
@@ -19,12 +38,23 @@ def upload():
         img_data = request.form.get('myImage').replace("data:image/png;base64,", "")
         category = request.form.get('category')
         print(category)
-        category_dir = os.path.join('static', 'uploads', category)
-        if not os.path.exists(category_dir):
-            os.makedirs(category_dir)
-        with tempfile.NamedTemporaryFile(delete=False, mode="w+b", suffix='.png', dir=category_dir) as fh:
+        
+        # Crear archivo temporal para la imagen
+        with tempfile.NamedTemporaryFile(delete=False, mode="w+b", suffix='.png') as fh:
             fh.write(base64.b64decode(img_data))
-        print("Image uploaded")
+            file_path = fh.name
+
+        # Subir archivo a Google Drive
+        file_metadata = {
+            'name': f'{category}.png',
+            'parents': [DRIVE_FOLDER_IDS[category]]  # ID de la carpeta en Google Drive para la categoría
+        }
+        media = MediaFileUpload(file_path, mimetype='image/png')
+        file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+
+        print(f"File ID: {file.get('id')}")
+        os.remove(file_path)
+        print("Image uploaded to Google Drive")
     except Exception as err:
         print("Error occurred")
         print(err)
@@ -33,58 +63,60 @@ def upload():
 
 @app.route('/uploads/<category>', methods=['GET'])
 def list_files(category):
-    category_dir = os.path.join('static', 'uploads', category)
-    if not os.path.exists(category_dir):
-        return "Category not found", 404
+    # Obtener archivos de la carpeta de Google Drive correspondiente a la categoría
+    folder_id = DRIVE_FOLDER_IDS.get(category)
+    if not folder_id:
+        return "Categoría no encontrada", 404
+    
+    results = service.files().list(
+        q=f"'{folder_id}' in parents",
+        spaces='drive',
+        fields="files(id, name)").execute()
+    files = results.get('files', [])
 
-    files = os.listdir(category_dir)
     return render_template('files_list.html', files=files, category=category)
 
-@app.route('/uploads/<category>/<filename>', methods=['GET'])
-def get_file(category, filename):
-    return send_from_directory(os.path.join('static', 'uploads', category), filename)
+@app.route('/uploads/<category>/<file_id>', methods=['GET'])
+def get_file(category, file_id):
+    # Descargar el archivo desde Google Drive
+    try:
+        request = service.files().get_media(fileId=file_id)
+        fh = tempfile.NamedTemporaryFile(delete=False)
+        downloader = MediaIoBaseDownload(fh, request)
+
+        done = False
+        while not done:
+            status, done = downloader.next_chunk()
+
+        fh.close()
+        return send_file(fh.name, mimetype='image/png')
+    except Exception as e:
+        print(e)
+        return "Error retrieving file", 500
 
 @app.route('/download_all', methods=['GET'])
 def download_all():
     zip_filename = "images.zip"
     with zipfile.ZipFile(zip_filename, 'w') as zipf:
-        for root, dirs, files in os.walk('static/uploads'):
+        for category, folder_id in DRIVE_FOLDER_IDS.items():
+            results = service.files().list(
+                q=f"'{folder_id}' in parents",
+                spaces='drive',
+                fields="files(id, name)").execute()
+            files = results.get('files', [])
             for file in files:
-                zipf.write(os.path.join(root, file), os.path.relpath(os.path.join(root, file), 'static/uploads'))
-    
+                request = service.files().get_media(fileId=file['id'])
+                fh = tempfile.NamedTemporaryFile(delete=False)
+                downloader = MediaIoBaseDownload(fh, request)
+                done = False
+                while not done:
+                    status, done = downloader.next_chunk()
+                fh.close()
+                zipf.write(fh.name, f"{category}/{file['name']}")
+                os.remove(fh.name)
+
     return send_file(zip_filename, as_attachment=True)
 
-@app.route('/prepare', methods=['GET'])
-def prepare_dataset():
-    images = []
-    categories = ["Animales", "Frutas", "Vehiculos", "Formas Geométricas", "Objetos de la Casa"]
-    labels = []
-    for category in categories:
-        filelist = glob.glob(f'static/uploads/{category}/*.png')
-        images_read = io.concatenate_images(io.imread_collection(filelist))
-        images_read = images_read[:, :, :, 3]
-        labels_read = np.array([category] * images_read.shape[0])
-        images.append(images_read)
-        labels.append(labels_read)
-    images = np.vstack(images)
-    labels = np.concatenate(labels)
-    np.save('X.npy', images)
-    np.save('y.npy', labels)
-    return "OK!"
-
-@app.route('/X.npy', methods=['GET'])
-def download_X():
-    return send_file('./X.npy')
-
-@app.route('/y.npy', methods=['GET'])
-def download_y():
-    return send_file('./y.npy')
-
 if __name__ == "__main__":
-    categories = ["Animales", "Frutas", "Vehiculos", "Formas Geométricas", "Objetos de la Casa"]
-    for category in categories:
-        category_dir = os.path.join('static', 'uploads', category)
-        if not os.path.exists(category_dir):
-            os.makedirs(category_dir)
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
