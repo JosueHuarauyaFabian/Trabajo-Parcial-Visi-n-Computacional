@@ -9,14 +9,20 @@ import numpy as np
 from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload
+import json
 
 app = Flask(__name__)
 
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
-SERVICE_ACCOUNT_FILE = 'credentials.json'
 
-credentials = service_account.Credentials.from_service_account_file(
-    SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+# Lee las credenciales desde las variables de entorno
+credentials_json = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
+if credentials_json:
+    credentials_info = json.loads(credentials_json)
+    credentials = service_account.Credentials.from_service_account_info(credentials_info, scopes=SCOPES)
+else:
+    raise ValueError("No GOOGLE_APPLICATION_CREDENTIALS found in environment variables")
+
 service = build('drive', 'v3', credentials=credentials)
 
 # IDs de las carpetas en Google Drive
