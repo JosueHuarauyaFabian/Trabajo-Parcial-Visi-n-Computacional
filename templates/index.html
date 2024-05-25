@@ -109,14 +109,26 @@
 
         function draw(e) {
             if (!painting) return;
+
+            e.preventDefault(); // Previene el comportamiento por defecto de desplazamiento en móviles
+
+            let x, y;
+            if (e.type.includes('mouse')) {
+                x = e.clientX - canvas.offsetLeft;
+                y = e.clientY - canvas.offsetTop;
+            } else if (e.type.includes('touch')) {
+                x = e.touches[0].clientX - canvas.offsetLeft;
+                y = e.touches[0].clientY - canvas.offsetTop;
+            }
+
             ctx.lineWidth = 10;
             ctx.lineCap = 'round';
             ctx.strokeStyle = '#000000';
 
-            ctx.lineTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.lineTo(x, y);
             ctx.stroke();
             ctx.beginPath();
-            ctx.moveTo(e.clientX - canvas.offsetLeft, e.clientY - canvas.offsetTop);
+            ctx.moveTo(x, y);
         }
 
         function clearCanvas() {
@@ -132,6 +144,10 @@
         canvas.addEventListener('mousedown', startPosition);
         canvas.addEventListener('mouseup', endPosition);
         canvas.addEventListener('mousemove', draw);
+
+        canvas.addEventListener('touchstart', startPosition);
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw);
     </script>
 </body>
 </html>
