@@ -46,7 +46,7 @@
         button:hover, input[type="submit"]:hover {
             background-color: #444444;
         }
-        input[type="text"], select {
+        input[type="text"], select, input[type="range"] {
             padding: 10px;
             font-size: 16px;
             margin-top: 10px;
@@ -65,6 +65,9 @@
     <div id="container">
         <canvas id="myCanvas" width="400" height="400"></canvas>
         <br>
+        <label for="lineWidth">Grosor de la línea:</label>
+        <input type="range" id="lineWidth" min="1" max="20" value="10" onchange="updateLineWidth(this.value)">
+        <br>
         <select id="category">
             <option value="">Seleccione una categoría</option>
             <option value="Animales">Animales</option>
@@ -74,10 +77,14 @@
             <option value="Objetos de la Casa">Objetos de la Casa</option>
         </select>
         <br>
+        <label for="objectName">Nombre del objeto:</label>
+        <input type="text" id="objectName" placeholder="Ingrese el nombre del objeto">
+        <br>
         <button onclick="clearCanvas()">Borrar</button>
         <form method="post" action="upload" onsubmit="prepareImage();">
             <input type="hidden" id="imageData" name="myImage">
             <input type="hidden" id="categoryInput" name="category">
+            <input type="hidden" id="objectNameInput" name="objectName">
             <input type="submit" value="Guardar Dibujo">
         </form>
         <br>
@@ -96,6 +103,7 @@
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         let painting = false;
+        let lineWidth = 10;
 
         function startPosition(e) {
             painting = true;
@@ -121,7 +129,7 @@
                 y = e.touches[0].clientY - canvas.offsetTop;
             }
 
-            ctx.lineWidth = 10;
+            ctx.lineWidth = lineWidth;
             ctx.lineCap = 'round';
             ctx.strokeStyle = '#000000';
 
@@ -135,10 +143,15 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
+        function updateLineWidth(value) {
+            lineWidth = value;
+        }
+
         function prepareImage() {
             const imageData = canvas.toDataURL('image/png');
             document.getElementById('imageData').value = imageData;
             document.getElementById('categoryInput').value = document.getElementById('category').value;
+            document.getElementById('objectNameInput').value = document.getElementById('objectName').value;
         }
 
         canvas.addEventListener('mousedown', startPosition);
