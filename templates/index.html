@@ -68,6 +68,11 @@
         <label for="lineWidth">Grosor de la línea:</label>
         <input type="range" id="lineWidth" min="1" max="20" value="10" onchange="updateLineWidth(this.value)">
         <br>
+        <label for="eraserWidth">Grosor del borrador:</label>
+        <input type="range" id="eraserWidth" min="1" max="20" value="10" onchange="updateEraserWidth(this.value)">
+        <br>
+        <button onclick="toggleEraser()">Toggle Borrador</button>
+        <br>
         <select id="category">
             <option value="">Seleccione una categoría</option>
             <option value="Animales">Animales</option>
@@ -103,7 +108,9 @@
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
         let painting = false;
+        let erasing = false;
         let lineWidth = 10;
+        let eraserWidth = 10;
 
         function startPosition(e) {
             painting = true;
@@ -129,9 +136,9 @@
                 y = e.touches[0].clientY - canvas.offsetTop;
             }
 
-            ctx.lineWidth = lineWidth;
+            ctx.lineWidth = erasing ? eraserWidth : lineWidth;
             ctx.lineCap = 'round';
-            ctx.strokeStyle = '#000000';
+            ctx.strokeStyle = erasing ? '#ffffff' : '#000000';
 
             ctx.lineTo(x, y);
             ctx.stroke();
@@ -145,6 +152,14 @@
 
         function updateLineWidth(value) {
             lineWidth = value;
+        }
+
+        function updateEraserWidth(value) {
+            eraserWidth = value;
+        }
+
+        function toggleEraser() {
+            erasing = !erasing;
         }
 
         function prepareImage() {
