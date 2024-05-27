@@ -1,6 +1,7 @@
 import tempfile
 import os
 import zipfile
+import time
 from flask import Flask, request, redirect, render_template, send_file
 from skimage import io
 import base64
@@ -43,7 +44,9 @@ def upload():
     try:
         img_data = request.form.get('myImage').replace("data:image/png;base64,", "")
         category = request.form.get('category')
-        print(category)
+        object_name = request.form.get('objectName').strip().replace(' ', '_')
+        timestamp = int(time.time())
+        filename = f"{category}_{object_name}_{timestamp}.png"
         
         # Crear archivo temporal para la imagen
         with tempfile.NamedTemporaryFile(delete=False, mode="w+b", suffix='.png') as fh:
@@ -52,7 +55,7 @@ def upload():
 
         # Subir archivo a Google Drive
         file_metadata = {
-            'name': f'{category}.png',
+            'name': filename,
             'parents': [DRIVE_FOLDER_IDS[category]]  # ID de la carpeta en Google Drive para la categoría
         }
         media = MediaFileUpload(file_path, mimetype='image/png')
