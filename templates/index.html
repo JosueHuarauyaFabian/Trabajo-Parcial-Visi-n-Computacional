@@ -32,7 +32,7 @@
         }
         canvas {
             border: 2px solid #000000;
-            background-color: transparent;
+            background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
         }
         button, input[type="submit"] {
             background-color: #000000;
@@ -106,7 +106,8 @@
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear the canvas
+        ctx.fillStyle = "rgba(255, 255, 255, 0)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         let painting = false;
         let erasing = false;
         let lineWidth = 10;
@@ -144,6 +145,10 @@
             ctx.stroke();
             ctx.beginPath();
             ctx.moveTo(x, y);
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
 
         function updateLineWidth(value) {
