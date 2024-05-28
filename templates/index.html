@@ -32,7 +32,7 @@
         }
         canvas {
             border: 2px solid #000000;
-            background-color: rgba(255, 255, 255, 0); /* Fondo transparente */
+            background-color: white; /* Fondo blanco visible */
         }
         button, input[type="submit"] {
             background-color: #000000;
@@ -106,8 +106,8 @@
     <script>
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
-        ctx.fillStyle = "rgba(255, 255, 255, 0)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height); // Pintar fondo blanco
         let painting = false;
         let erasing = false;
         let lineWidth = 10;
@@ -149,6 +149,8 @@
 
         function clearCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "white"; // Asegurarse de que el fondo sea blanco
+            ctx.fillRect(0, 0, canvas.width, canvas.height); // Repintar fondo blanco
         }
 
         function updateLineWidth(value) {
@@ -164,7 +166,17 @@
         }
 
         function prepareImage() {
-            const imageData = canvas.toDataURL('image/png');
+            // Crear una copia del canvas con fondo transparente
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = canvas.width;
+            tempCanvas.height = canvas.height;
+            tempCtx.drawImage(canvas, 0, 0);
+            tempCtx.globalCompositeOperation = 'destination-over';
+            tempCtx.fillStyle = 'transparent';
+            tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+            const imageData = tempCanvas.toDataURL('image/png');
             document.getElementById('imageData').value = imageData;
             document.getElementById('categoryInput').value = document.getElementById('category').value;
             document.getElementById('objectNameInput').value = document.getElementById('objectName').value;
