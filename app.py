@@ -49,7 +49,7 @@ def upload():
         filename = f"{category}_{object_name}_{timestamp}.png"
         
         # Crear archivo temporal para la imagen
-        with tempfile.NamedTemporaryFile(delete=False, mode="w+b", suffix='.png') as fh:
+        with tempfile.NamedTemporaryFile(delete=False, mode="wb", suffix='.png') as fh:
             fh.write(base64.b64decode(img_data))
             file_path = fh.name
 
