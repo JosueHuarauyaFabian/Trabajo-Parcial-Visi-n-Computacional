@@ -30,3 +30,43 @@ El objetivo de este proyecto es desarrollar un sistema de reconocimiento de dibu
 
 - Python 3.7 o superior
 - Pip
+### Instalación
+
+1. Clona este repositorio:
+    bash
+    git clone https://github.com/JosueHuarauyaFabian/Trabajo-Parcial-Visi-n-Computacional.git
+    cd Trabajo-Parcial-Visi-n-Computacional
+    
+
+2. Instala las dependencias:
+    bash
+    pip install -r requirements.txt
+    
+
+3. Ejecuta la aplicación:
+    bash
+    python app.py
+    
+
+## Estructura del Proyecto
+
+- app.py: Código fuente de la aplicación Flask.
+- templates/: Plantillas HTML para el sitio web.
+- static/: Archivos estáticos (CSS, JavaScript).
+- requirements.txt: Lista de dependencias del proyecto.
+- Procfile: Archivo de configuración para el despliegue en Render.
+
+## Sobre la Exposición
+
+Todos los integrantes del equipo deben estar preparados para presentar el proyecto y responder preguntas. La exposición debe durar entre 10 y 15 minutos y cubrir los siguientes puntos:
+- Descripción del proyecto.
+- Funcionalidades del sitio web.
+- Proceso de entrenamiento del modelo.
+- Resultados obtenidos y conclusiones.
+
+## Integrantes:
+-
+- More Ayay, Dahayra Xiomara
+-
+-
+Para cualquier consulta, puedes contactar con los integrantes del equipo a través de GitHub.
