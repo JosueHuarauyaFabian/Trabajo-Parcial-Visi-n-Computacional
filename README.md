@@ -30,6 +30,7 @@ El objetivo de este proyecto es desarrollar un sistema de reconocimiento de dibu
 
 - Python 3.7 o superior
 - Pip
+  
 ### Instalación
 
 1. Clona este repositorio:
@@ -64,9 +65,10 @@ Todos los integrantes del equipo deben estar preparados para presentar el proyec
 - Proceso de entrenamiento del modelo.
 - Resultados obtenidos y conclusiones.
 
+
 ## Integrantes:
--
-- More Ayay, Dahayra Xiomara
--
--
+- Huarauya Fabian, Josue Eduardo
+- Lima Quispe, Alexandra Nacy
+- More Ayay, Dahayra Xiomara 
+- Huarcaya Pumacayo, Victor Nikolai
 Para cualquier consulta, puedes contactar con los integrantes del equipo a través de GitHub.
