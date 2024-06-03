@@ -71,4 +71,5 @@ Todos los integrantes del equipo deben estar preparados para presentar el proyec
 - Lima Quispe, Alexandra Nacy
 - More Ayay, Dahayra Xiomara 
 - Huarcaya Pumacayo, Victor Nikolai
+  
 Para cualquier consulta, puedes contactar con los integrantes del equipo a través de GitHub.
