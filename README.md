@@ -23,6 +23,7 @@ El objetivo de este proyecto es desarrollar un sistema de reconocimiento de dibu
 - *Enlace al sitio web*: [Sitio Web de Dibujos](https://trabajo-parcial-visi-n-computacional.onrender.com)
 - *Enlace al repositorio de GitHub*: [Repositorio en GitHub](https://github.com/JosueHuarauyaFabian/Trabajo-Parcial-Visi-n-Computacional.git)
 - *Enlace al notebook de Google Colab*: [Notebook en Google Colab](https://colab.research.google.com/drive/1ikTVEK3SJNFilwkjMx0cgqpAB-iVlM_E?usp=sharing)
+- *Enlace a la presentación*: [Canva](https://www.canva.com/design/DAGGLqjRBsI/xJeTrFZFH2A7PlL-TKavrQ/edit)
 
 ## Instrucciones para Ejecutar el Proyecto
 
